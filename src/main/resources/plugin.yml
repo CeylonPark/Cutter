@@ -1,0 +1,4 @@
+name: Cutter
+version: '${project.version}'
+main: com.ceylon.cutter.Cutter
+api-version: 1.16
