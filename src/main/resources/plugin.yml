@@ -1,4 +1,7 @@
 name: Cutter
 version: '${project.version}'
-main: com.ceylon.cutter.Cutter
+main: com.ceylon.cutter.CutterPlugin
 api-version: 1.16
+commands:
+  세공설정:
+  돌제작:
