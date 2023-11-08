@@ -2,14 +2,8 @@ package com.ceylon.cutter.command;
 
 import com.ceylon.cutter.CutterAddition;
 import com.ceylon.cutter.api.CommandConstructor;
-import com.ceylon.cutter.util.ItemBuilder;
-import net.kyori.adventure.text.Component;
-import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.Plugin;
 
 public class CutterCommand extends CommandConstructor {

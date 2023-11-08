@@ -22,9 +22,13 @@ public final class CutterPlugin extends JavaPlugin {
         // file load
         this.loadConfig();
         CutterAddition.getInstance().load(this);
+        // init CutterInventory
+        CutterInventory cutterInventory = new CutterInventory(this, "세공열기");
         // init Listeners
-        this.getServer().getPluginManager().registerEvents(new CutterInventory(this), this);
+        this.getServer().getPluginManager().registerEvents(cutterInventory, this);
         // init Commands
+        Objects.requireNonNull(this.getCommand("세공열기")).setExecutor(cutterInventory);
+        Objects.requireNonNull(this.getCommand("세공열기")).setTabCompleter(cutterInventory);
         CutterCommand cutterCommand = new CutterCommand(this, "세공설정");
         Objects.requireNonNull(this.getCommand("세공설정")).setExecutor(cutterCommand);
         Objects.requireNonNull(this.getCommand("세공설정")).setTabCompleter(cutterCommand);

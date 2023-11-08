@@ -1,11 +1,14 @@
 package com.ceylon.cutter.listener;
 
+import com.ceylon.cutter.api.CommandConstructor;
 import com.ceylon.cutter.data.CutterItem;
 import com.ceylon.cutter.util.ItemBuilder;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
@@ -20,8 +23,13 @@ import org.bukkit.plugin.Plugin;
 
 import java.util.*;
 
-public class CutterInventory implements Listener {
+public class CutterInventory extends CommandConstructor implements Listener {
     private static final int CUTTER_SLOT = 4;
+    private static final int[] CUTTER_FRAME = {
+            0, 1, 2, 3, 5, 6, 7, 8,
+            9, 10, 11, 12, 13, 14, 15, 16, 17,
+            36, 37, 38, 39, 40, 41, 42, 43, 44
+    };
     private static final int[][] CUTTER_LINE = {
             {18, 19, 20, 21, 22, 23, 24, 25, 26},
             {27, 28, 29, 30, 31, 32, 33, 34, 35},
@@ -31,8 +39,26 @@ public class CutterInventory implements Listener {
     private final Plugin plugin;
     private final Map<UUID, CutterItem> cutting = new HashMap<>();
 
-    public CutterInventory(Plugin plugin) {
+    public CutterInventory(Plugin plugin, String command) {
+        super(plugin, command);
         this.plugin = plugin;
+    }
+
+    private void openCutterInventory(Player player) {
+        // Cutter Inventory Open
+        Inventory inv = Bukkit.createInventory(player, 54, Component.text("세공"));
+        // frame
+        for (int slot : CutterInventory.CUTTER_FRAME) {
+            ItemStack itemStack = new ItemStack(Material.BLACK_STAINED_GLASS_PANE);
+            inv.setItem(slot, itemStack);
+        }
+        // 텍스쳐팩 전용 기능
+        //inv.setItem(8, new ItemBuilder(Material.QUARTZ).setCustomModelData(7).build());
+
+        if (this.cutting.containsKey(player.getUniqueId())) {
+            this.refreshCutterAll(inv, this.cutting.get(player.getUniqueId()));
+        }
+        player.openInventory(inv);
     }
 
     @EventHandler
@@ -44,13 +70,7 @@ public class CutterInventory implements Listener {
             return;
         }
         // Cutter Inventory Open
-        Player player = event.getPlayer();
-        Inventory inv = Bukkit.createInventory(player, 54, Component.text("세공"));
-        inv.setItem(8, new ItemBuilder(Material.QUARTZ).setCustomModelData(7).build());
-        if (this.cutting.containsKey(player.getUniqueId())) {
-            this.refreshCutterAll(inv, this.cutting.get(player.getUniqueId()));
-        }
-        player.openInventory(inv);
+        this.openCutterInventory(event.getPlayer());
     }
 
     @EventHandler
@@ -283,5 +303,23 @@ public class CutterInventory implements Listener {
         } else {
             inv.setItem(CutterInventory.CUTTER_LINE[line][count], new ItemBuilder(Material.BROWN_DYE).displayName(ChatColor.WHITE + abilityName).build());
         }
+    }
+
+    @Override
+    public boolean onCommandEmpty(CommandSender sender, Command command, String label) {
+        if (sender instanceof Player) {
+            this.openCutterInventory((Player) sender);
+        }
+        return true;
+    }
+
+    @Override
+    public boolean onBeforeCommand(CommandSender sender, Command command, String label, String[] args) {
+        return false;
+    }
+
+    @Override
+    public boolean onAfterCommand(CommandSender sender, Command command, String label, String[] args, boolean sub_result) {
+        return true;
     }
 }
